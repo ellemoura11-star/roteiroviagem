@@ -519,8 +519,7 @@
     body.viewer-mode .btn-del,
     body.viewer-mode .btn-del-day,
     body.viewer-mode .btn-add-poi { display: none !important; }
-    body.viewer-mode .header-right button:nth-child(2) { display: none !important; }
-    body.viewer-mode #trip-name { pointer-events: none; }
+    body.viewer-mode .header-right button:nth-child(3) { display: none !important; }
 
     /* ── LOGIN OVERLAY ── */
     #login-overlay {
@@ -568,11 +567,6 @@
       <div class="brand-name">Roteiro de Viagem</div>
       <div class="brand-sub">Planejador por dia</div>
     </div>
-  </div>
-
-  <div class="trip-name-wrap">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-    <input type="text" id="trip-name" placeholder="Nome da viagem…" oninput="updateTitle()">
   </div>
 
   <div class="header-right">
@@ -718,7 +712,7 @@
   function scheduleSave() {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
-      const name = document.getElementById('trip-name').value.trim() || 'Minha Viagem';
+      const name = document.getElementById('trip-title-display').textContent || 'Minha Viagem';
       try {
         await supa.from('roteiro_data').upsert({ id: 1, nome_viagem: name, dias_json: days });
       } catch(e) { console.error('Erro ao salvar no Supabase', e); }
@@ -892,8 +886,7 @@
   }
 
   // ── Render ──
-  function updateTitle() {
-    const name = document.getElementById('trip-name').value.trim();
+  function updateTitle(name) {
     document.getElementById('trip-title-display').textContent = name || 'Minha Viagem';
     document.title = name ? name + ' — Roteiro' : 'Roteiro de Viagem';
     scheduleSave();
@@ -1045,8 +1038,7 @@
     const sel = document.getElementById('day-select');
     while (sel.options.length > 2) sel.remove(1);
     sel.value = '';
-    document.getElementById('trip-name').value = '';
-    updateTitle();
+    updateTitle('Minha Viagem');
     renderAll();
   }
 
@@ -1082,7 +1074,6 @@
       const { data, error } = await supa.from('roteiro_data').select('*').eq('id', 1).single();
       if (data) {
         if (data.nome_viagem) {
-          document.getElementById('trip-name').value = data.nome_viagem;
           document.getElementById('trip-title-display').textContent = data.nome_viagem;
           document.title = data.nome_viagem + ' — Roteiro';
         }
