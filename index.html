@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roteiro de Viagem</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -704,6 +705,22 @@
 </div>
 
 <script>
+  // ── Supabase ──
+  const supabaseUrl = 'https://lzbepuubxlkorvayukie.supabase.co';
+  const supabaseKey = 'sb_publishable_0aX-qTjw43ysggnPFv1EXA_r4pvXt7y';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+  let saveTimeout;
+  function scheduleSave() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(async () => {
+      const name = document.getElementById('trip-name').value.trim() || 'Minha Viagem';
+      try {
+        await supabase.from('roteiro_data').upsert({ id: 1, nome_viagem: name, dias_json: days });
+      } catch(e) { console.error('Erro ao salvar no Supabase', e); }
+    }, 1000);
+  }
+
   // ── Login ──
   // Adicione seus usuários aqui. O PIN (4 dígitos) é a chave e o Nome é o valor.
   const USERS = {
@@ -865,7 +882,7 @@
     const name = document.getElementById('trip-name').value.trim();
     document.getElementById('trip-title-display').textContent = name || 'Minha Viagem';
     document.title = name ? name + ' — Roteiro' : 'Roteiro de Viagem';
-    localStorage.setItem('roteiro_nome', name);
+    scheduleSave();
   }
 
   function renderAll() {
@@ -906,7 +923,7 @@
     const dayHtml = activeDay ? renderDay(activeDay) : '';
 
     cont.innerHTML = cardsHtml + dayHtml;
-    localStorage.setItem('roteiro_dados', JSON.stringify(days));
+    scheduleSave();
   }
 
   function setActiveDay(id) {
@@ -1045,19 +1062,25 @@
   // Init
   document.getElementById('nd-date').value = new Date().toISOString().split('T')[0];
   
-  // Carregar dados salvos
-  try {
-    const savedName = localStorage.getItem('roteiro_nome');
-    if (savedName) {
-      document.getElementById('trip-name').value = savedName;
-      updateTitle();
-    }
-    const savedDays = localStorage.getItem('roteiro_dados');
-    if (savedDays) {
-      days = JSON.parse(savedDays);
-      renderAll();
-    }
-  } catch(e) { console.error('Erro ao carregar dados', e); }
+  // Carregar dados salvos do Supabase
+  async function loadData() {
+    try {
+      const { data, error } = await supabase.from('roteiro_data').select('*').eq('id', 1).single();
+      if (data) {
+        if (data.nome_viagem) {
+          document.getElementById('trip-name').value = data.nome_viagem;
+          document.getElementById('trip-title-display').textContent = data.nome_viagem;
+          document.title = data.nome_viagem + ' — Roteiro';
+        }
+        if (data.dias_json) {
+          days = data.dias_json;
+          renderAll();
+        }
+      }
+    } catch(e) { console.error('Erro ao carregar dados', e); }
+  }
+  
+  loadData();
 </script>
 </body>
 </html>
