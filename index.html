@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roteiro de Viagem</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F5F6F8;
+      --surface:   #FFFFFF;
+      --surface2:  #F0F2F5;
+      --border:    #E2E6EC;
+      --amber:     #D97A16;
+      --amber-dim: rgba(217,122,22,.10);
+      --green:     #1A8A6A;
+      --green-dim: rgba(26,138,106,.08);
+      --text:      #1C2432;
+      --muted:     #7A8799;
+      --danger:    #D94040;
+      --radius:    12px;
+      --rsm:       8px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+
+    .header-brand { display: flex; align-items: center; gap: 12px; }
+
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: var(--amber);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .brand-icon svg { width: 20px; height: 20px; }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .trip-name-wrap {
+      flex: 1;
+      max-width: 340px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      padding: 8px 14px;
+    }
+    .trip-name-wrap svg { flex-shrink: 0; color: var(--muted); }
+    #trip-name {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      width: 100%;
+    }
+    #trip-name::placeholder { color: var(--muted); }
+
+    .header-right { display: flex; gap: 8px; margin-left: auto; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: var(--rsm);
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      border: none; transition: all .18s; white-space: nowrap;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-ghost {
+      background: none; color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: #c5cdd8; }
+
+    .btn-amber {
+      background: var(--amber); color: #fff; font-weight: 600;
+    }
+    .btn-amber:hover { background: #c06a0e; box-shadow: 0 3px 12px rgba(217,122,22,.3); transform: translateY(-1px); }
+
+    .btn-green {
+      background: var(--green); color: #fff; font-weight: 600;
+    }
+    .btn-green:hover { background: #157055; transform: translateY(-1px); }
+
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* ── LAYOUT ── */
+    .wrap {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: calc(100vh - 69px);
+    }
+
+    /* ── SIDEBAR FORM ── */
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 24px 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* Day selector */
+    .day-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .day-select-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    select {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 9px 12px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .18s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A8799' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    select:focus { border-color: var(--amber); }
+
+    /* New day form */
+    .new-day-form {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      padding: 14px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .new-day-form.open { display: flex; }
+    .new-day-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Field */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .8px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input, .field textarea {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--rsm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      resize: none;
+    }
+    .field input:focus, .field textarea:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px var(--amber-dim);
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: .6; }
+
+    .divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+    /* POI */
+    .poi-row { display: flex; gap: 8px; }
+    .poi-row input { flex: 1; }
+    .btn-add-poi {
+      background: var(--green-dim);
+      border: 1px solid rgba(26,138,106,.2);
+      border-radius: var(--rsm);
+      color: var(--green);
+      font-size: 20px; line-height: 1;
+      padding: 8px 13px; cursor: pointer;
+      transition: all .18s;
+    }
+    .btn-add-poi:hover { background: rgba(26,138,106,.15); }
+
+    .poi-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .poi-tag {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--green-dim);
+      border: 1px solid rgba(26,138,106,.15);
+      border-radius: 20px;
+      padding: 3px 10px 3px 10px;
+      font-size: 12px; color: var(--green);
+      animation: fadeIn .15s ease;
+    }
+    .poi-tag button {
+      background: none; border: none;
+      color: rgba(26,138,106,.5); cursor: pointer;
+      font-size: 15px; line-height: 1; padding: 0;
+      transition: color .15s;
+    }
+    .poi-tag button:hover { color: var(--danger); }
+
+    /* ── MAIN CONTENT ── */
+    .content {
+      padding: 28px 32px;
+      overflow-y: auto;
+    }
+
+    /* Empty */
+    .empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 400px; gap: 14px; text-align: center;
+      color: var(--muted);
+    }
+    .empty svg { opacity: .2; }
+    .empty h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; }
+    .empty p { font-size: 13px; max-width: 280px; }
+
+    /* Trip header */
+    .trip-header {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      gap: 16px; margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .trip-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 700;
+    }
+    .trip-meta { font-size: 13px; color: var(--muted); }
+
+    /* Day block */
+    .day-block {
+      margin-bottom: 32px;
+      animation: slideIn .25s ease;
+    }
+
+    .day-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .day-label-wrap { display: flex; align-items: center; gap: 10px; }
+    .day-badge {
+      background: var(--amber);
+      color: #fff;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .8px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 20px;
+    }
+    .day-date-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 600;
+    }
+    .day-stop-count { font-size: 12px; color: var(--muted); }
+
+    /* Stops list */
+    .stops-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Stop row */
+    .stop-row {
+      display: flex;
+      gap: 0;
+      position: relative;
+      animation: fadeIn .2s ease;
+    }
+
+    /* Left gutter: line + dot */
+    .stop-gutter {
+      width: 36px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .stop-dot {
+      width: 14px; height: 14px;
+      background: #fff;
+      border: 2.5px solid var(--amber);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 16px;
+      z-index: 1;
+    }
+    .stop-line {
+      flex: 1;
+      width: 2px;
+      background: var(--border);
+      min-height: 20px;
+    }
+
+    /* Stop card */
+    .stop-card {
+      flex: 1;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      margin-left: 8px;
+      transition: box-shadow .18s, border-color .18s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .stop-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); border-color: #c5cdd8; }
+
+    .stop-card-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 10px;
+    }
+
+    .stop-place {
+      font-size: 15px; font-weight: 600;
+      color: var(--text);
+    }
+
+    .stop-route {
+      display: flex; align-items: center;
+      gap: 8px; flex-wrap: wrap;
+    }
+    .stop-place-col { display: flex; flex-direction: column; gap: 2px; }
+    .stop-from { font-size: 15px; font-weight: 600; color: var(--text); }
+    .stop-arrow-icon { color: var(--amber); display: flex; align-items: center; flex-shrink: 0; }
+    .stop-to { font-size: 15px; font-weight: 700; color: var(--amber); }
+    .stop-addr { font-size: 11px; color: var(--muted); line-height: 1.3; }
+
+    .btn-maps {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #E8F4FD; border: 1px solid #B3D7F0;
+      border-radius: 6px; color: #1A6FA8;
+      font-size: 12px; font-weight: 500;
+      padding: 4px 10px; cursor: pointer;
+      text-decoration: none; transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-maps:hover { background: #D0E9F8; border-color: #1A6FA8; }
+
+    .btn-maps-day {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #1A6FA8; border: none;
+      border-radius: 6px; color: #fff;
+      font-size: 12px; font-weight: 600;
+      padding: 6px 12px; cursor: pointer;
+      text-decoration: none; transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-maps-day:hover { background: #155d8f; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(26,111,168,.3); }
+
+    .stop-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+    .time-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--amber-dim);
+      border: 1px solid rgba(217,122,22,.2);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--amber);
+      white-space: nowrap;
+    }
+    .time-chip-label { font-size: 10px; font-family: 'Inter', sans-serif; opacity: .7; }
+
+    .btn-del {
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted);
+      padding: 4px 8px; cursor: pointer; font-size: 13px;
+      transition: all .15s; line-height: 1;
+    }
+    .btn-del:hover { color: var(--danger); border-color: var(--danger); background: rgba(217,64,64,.05); }
+
+    .stop-notes {
+      font-size: 12px; color: var(--muted);
+      font-style: italic; margin-top: 6px;
+    }
+
+    .stop-pois {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      margin-top: 8px;
+    }
+    .stop-poi-badge {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--green-dim);
+      border: 1px solid rgba(26,138,106,.12);
+      border-radius: 20px;
+      padding: 2px 9px; font-size: 11px;
+      color: var(--green);
+    }
+
+    /* Arrow between stops */
+    .stop-arrow {
+      display: flex; align-items: center;
+      gap: 6px;
+      padding: 2px 0 2px 52px;
+      font-size: 12px; color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .arrow-line {
+      flex: 1; height: 1px;
+      border-top: 1px dashed var(--border);
+    }
+
+    /* Day delete btn */
+    .btn-del-day {
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted);
+      padding: 4px 10px; cursor: pointer;
+      font-size: 12px; transition: all .15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .btn-del-day:hover { color: var(--danger); border-color: var(--danger); background: rgba(217,64,64,.04); }
+
+    /* Animations */
+    @keyframes fadeIn  { from { opacity:0; transform:translateY(-4px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideIn { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+
+    /* Print */
+    @media print {
+      .sidebar, header .header-right, .btn-del, .btn-del-day { display: none !important; }
+      .wrap { grid-template-columns: 1fr; }
+      header { box-shadow: none; border-bottom: 1px solid #ccc; }
+      .stop-card { box-shadow: none; border-color: #ddd; }
+    }
+
+    /* Responsive */
+    @media (max-width: 780px) {
+      .wrap { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+      .content { padding: 20px 16px; }
+    }
+
+    /* ── DAY CARDS (TABS) ── */
+    .day-cards {
+      display: flex; gap: 12px; overflow-x: auto; margin-bottom: 24px;
+      padding-bottom: 8px; /* For scrollbar */
+    }
+    .day-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 16px;
+      min-width: 120px; cursor: pointer; transition: all .2s;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; flex-shrink: 0;
+    }
+    .day-card:hover {
+      border-color: #c5cdd8; box-shadow: 0 4px 12px rgba(0,0,0,.05); transform: translateY(-2px);
+    }
+    .day-card.active {
+      background: var(--amber); border-color: var(--amber); color: #fff;
+    }
+    .day-card.active .day-card-title, .day-card.active .day-card-date { color: #fff; }
+    
+    .day-card-title { font-weight: 600; font-size: 14px; color: var(--text); }
+    .day-card-date { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ── VIEWER MODE (NON-ADMIN) ── */
+    body.viewer-mode .sidebar { display: none !important; }
+    body.viewer-mode .wrap { grid-template-columns: 1fr !important; }
+    body.viewer-mode .btn-del,
+    body.viewer-mode .btn-del-day,
+    body.viewer-mode .btn-add-poi { display: none !important; }
+    body.viewer-mode .header-right button:nth-child(2) { display: none !important; }
+    body.viewer-mode #trip-name { pointer-events: none; }
+
+    /* ── LOGIN OVERLAY ── */
+    #login-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.3s;
+    }
+    .login-box {
+      background: #fff; padding: 32px; border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+      text-align: center; width: 100%; max-width: 320px;
+    }
+    .login-box h2 { font-family: 'Playfair Display', serif; margin-bottom: 8px; color: var(--text); }
+    .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .pin-input {
+      font-size: 24px; font-family: 'JetBrains Mono', monospace; letter-spacing: 8px;
+      text-align: center; width: 100%; padding: 12px; border: 1px solid var(--border);
+      border-radius: var(--rsm); outline: none; margin-bottom: 16px;
+    }
+    .pin-input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-dim); }
+    .login-error { color: var(--danger); font-size: 12px; margin-bottom: 12px; display: none; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <h2>Acesso Restrito</h2>
+    <p>Digite o PIN de 4 dígitos para acessar o roteiro.</p>
+    <input type="password" id="pin-input" class="pin-input" maxlength="4" placeholder="••••">
+    <div id="login-error" class="login-error">PIN incorreto.</div>
+    <button class="btn btn-amber" style="width:100%; justify-content:center;" onclick="checkPin()">Acessar</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Roteiro de Viagem</div>
+      <div class="brand-sub">Planejador por dia</div>
+    </div>
+  </div>
+
+  <div class="trip-name-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+    <input type="text" id="trip-name" placeholder="Nome da viagem…" oninput="updateTitle()">
+  </div>
+
+  <div class="header-right">
+    <button class="btn btn-ghost" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir
+    </button>
+    <button class="btn btn-ghost" onclick="clearAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Limpar tudo
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Step 1: Day -->
+    <div class="sidebar-section-title">1. Escolha o dia</div>
+    <div class="day-selector">
+      <div class="day-select-row">
+        <select id="day-select" onchange="onDaySelectChange()">
+          <option value="">— Selecione um dia —</option>
+          <option value="__new__">+ Criar novo dia</option>
+        </select>
+      </div>
+
+      <div class="new-day-form" id="new-day-form">
+        <div class="field">
+          <label>Nome do dia</label>
+          <input type="text" id="nd-label" placeholder="Ex: Sábado, Dia 1…">
+        </div>
+        <div class="new-day-form-row">
+          <div class="field">
+            <label>Data</label>
+            <input type="date" id="nd-date">
+          </div>
+        </div>
+        <button class="btn btn-amber btn-sm" onclick="createDay()" style="align-self:flex-start;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Criar dia
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Step 2: Stop -->
+    <div class="sidebar-section-title">2. Adicionar parada</div>
+
+    <div class="field" style="margin-bottom:6px;">
+      <label>De (origem)</label>
+      <input type="text" id="stop-from" placeholder="Ex: São Paulo, SP">
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label style="font-size:10px; color:var(--muted); opacity:.8;">Endereço de origem <span style="font-style:italic; font-weight:400;">(para Maps)</span></label>
+      <input type="text" id="stop-from-addr" placeholder="Ex: Av. Paulista, 1578, São Paulo">
+    </div>
+
+    <div class="field" style="margin-bottom:6px;">
+      <label>Para (destino)</label>
+      <input type="text" id="stop-to" placeholder="Ex: Campinas, SP">
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label style="font-size:10px; color:var(--muted); opacity:.8;">Endereço de destino <span style="font-style:italic; font-weight:400;">(para Maps)</span></label>
+      <input type="text" id="stop-to-addr" placeholder="Ex: R. 13 de Maio, 340, Campinas" onkeydown="if(event.key==='Enter')addStop()">
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+      <div class="field">
+        <label>Saída às</label>
+        <input type="time" id="stop-time">
+      </div>
+      <div class="field">
+        <label>Chegada às</label>
+        <input type="time" id="stop-arrive">
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:12px;">
+      <label>Observações</label>
+      <textarea id="stop-notes" rows="2" placeholder="Hospedagem, transporte, dicas…"></textarea>
+    </div>
+
+    <div class="field" style="margin-bottom:4px;">
+      <label>Pontos a visitar</label>
+      <div class="poi-row">
+        <input type="text" id="poi-input" placeholder="Ex: Museu, Restaurante…" onkeydown="poiEnter(event)">
+        <button class="btn-add-poi" onclick="addPoi()" title="Adicionar ponto">+</button>
+      </div>
+      <div class="poi-tags" id="poi-tags"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="btn btn-amber" style="width:100%; justify-content:center;" onclick="addStop()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Adicionar parada
+    </button>
+
+    <p id="no-day-warn" style="display:none; margin-top:10px; font-size:12px; color:var(--danger); text-align:center;">
+      ⚠ Selecione ou crie um dia primeiro.
+    </p>
+
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="empty" id="empty-state">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7A8799" stroke-width="1"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <h3>Nenhum dia criado ainda</h3>
+      <p>Crie o primeiro dia no painel ao lado e adicione as paradas da sua rota.</p>
+    </div>
+
+    <div id="itinerary" style="display:none;">
+      <div class="trip-header">
+        <div>
+          <div class="trip-title" id="trip-title-display">Minha Viagem</div>
+          <div class="trip-meta" id="trip-meta"></div>
+        </div>
+      </div>
+      <div id="days-container"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── Login ──
+  // Adicione seus usuários aqui. O PIN (4 dígitos) é a chave e o Nome é o valor.
+  const USERS = {
+    '1234': 'Administrador',
+    '4321': 'João',
+    '0000': 'Maria'
+  };
+  
+  function checkPin() {
+    const pin = document.getElementById('pin-input').value;
+    const err = document.getElementById('login-error');
+    
+    if (USERS[pin]) {
+      const userName = USERS[pin];
+      document.getElementById('login-overlay').style.opacity = '0';
+      setTimeout(() => document.getElementById('login-overlay').style.display = 'none', 300);
+      sessionStorage.setItem('roteiro_auth', 'true');
+      sessionStorage.setItem('roteiro_user', userName);
+      applyUserRole(userName);
+    } else {
+      err.style.display = 'block';
+      shake(document.getElementById('pin-input'));
+    }
+  }
+  
+  document.getElementById('pin-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') checkPin();
+  });
+  
+  if (sessionStorage.getItem('roteiro_auth') === 'true') {
+    document.getElementById('login-overlay').style.display = 'none';
+    applyUserRole(sessionStorage.getItem('roteiro_user'));
+  }
+
+  function applyUserRole(user) {
+    if (user !== 'Administrador') {
+      document.body.classList.add('viewer-mode');
+    } else {
+      document.body.classList.remove('viewer-mode');
+    }
+  }
+
+  // ── State ──
+  let days  = [];   // { id, label, date, stops[] }
+  let pois  = [];   // temp form list
+  let activeDayId = null; // Dia ativo selecionado
+
+  // ── Day management ──
+  function onDaySelectChange() {
+    const val = document.getElementById('day-select').value;
+    const form = document.getElementById('new-day-form');
+    form.classList.toggle('open', val === '__new__');
+  }
+
+  function createDay() {
+    const label = document.getElementById('nd-label').value.trim();
+    const date  = document.getElementById('nd-date').value;
+    if (!label) { shake(document.getElementById('nd-label')); return; }
+
+    const id = Date.now();
+    days.push({ id, label, date, stops: [] });
+
+    // Add to select and select it
+    const sel = document.getElementById('day-select');
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = label + (date ? ' — ' + formatDate(date) : '');
+    sel.insertBefore(opt, sel.querySelector('[value="__new__"]'));
+    sel.value = id;
+
+    // Reset new-day form
+    document.getElementById('nd-label').value = '';
+    document.getElementById('nd-date').value  = '';
+    document.getElementById('new-day-form').classList.remove('open');
+
+    renderAll();
+  }
+
+  function deleteDay(id) {
+    if (!confirm('Remover este dia e todas as paradas?')) return;
+    days = days.filter(d => d.id !== id);
+    // Remove from select
+    const sel = document.getElementById('day-select');
+    const opt = sel.querySelector(`option[value="${id}"]`);
+    if (opt) opt.remove();
+    if (sel.value == id) sel.value = '';
+    renderAll();
+  }
+
+  // ── Stop management ──
+  function addStop() {
+    const sel   = document.getElementById('day-select');
+    const dayId = parseInt(sel.value);
+    const day   = days.find(d => d.id === dayId);
+
+    if (!day) {
+      document.getElementById('no-day-warn').style.display = 'block';
+      setTimeout(() => document.getElementById('no-day-warn').style.display = 'none', 2500);
+      return;
+    }
+    document.getElementById('no-day-warn').style.display = 'none';
+
+    const from     = document.getElementById('stop-from').value.trim();
+    const to       = document.getElementById('stop-to').value.trim();
+    const fromAddr = document.getElementById('stop-from-addr').value.trim();
+    const toAddr   = document.getElementById('stop-to-addr').value.trim();
+    if (!from) { shake(document.getElementById('stop-from')); return; }
+    if (!to)   { shake(document.getElementById('stop-to'));   return; }
+
+    const time   = document.getElementById('stop-time').value;
+    const arrive = document.getElementById('stop-arrive').value;
+    const notes  = document.getElementById('stop-notes').value.trim();
+
+    day.stops.push({ id: Date.now(), from, to, fromAddr, toAddr, time, arrive, notes, pois: [...pois] });
+
+    // Reset form
+    document.getElementById('stop-from').value      = '';
+    document.getElementById('stop-from-addr').value = '';
+    document.getElementById('stop-to').value        = '';
+    document.getElementById('stop-to-addr').value   = '';
+    document.getElementById('stop-time').value      = '';
+    document.getElementById('stop-arrive').value    = '';
+    document.getElementById('stop-notes').value     = '';
+    pois = [];
+    renderPoiTags();
+    document.getElementById('stop-from').focus();
+
+    renderAll();
+  }
+
+  function deleteStop(dayId, stopId) {
+    const day = days.find(d => d.id === dayId);
+    if (day) day.stops = day.stops.filter(s => s.id !== stopId);
+    renderAll();
+  }
+
+  // ── POI helpers ──
+  function addPoi() {
+    const inp = document.getElementById('poi-input');
+    const val = inp.value.trim();
+    if (!val) return;
+    pois.push(val);
+    renderPoiTags();
+    inp.value = '';
+    inp.focus();
+  }
+  function poiEnter(e) { if (e.key === 'Enter') { e.preventDefault(); addPoi(); } }
+  function removePoi(i) { pois.splice(i, 1); renderPoiTags(); }
+  function renderPoiTags() {
+    document.getElementById('poi-tags').innerHTML = pois.map((p, i) => `
+      <div class="poi-tag">
+        <span>${esc(p)}</span>
+        <button onclick="removePoi(${i})" title="Remover">×</button>
+      </div>`).join('');
+  }
+
+  // ── Render ──
+  function updateTitle() {
+    const name = document.getElementById('trip-name').value.trim();
+    document.getElementById('trip-title-display').textContent = name || 'Minha Viagem';
+    document.title = name ? name + ' — Roteiro' : 'Roteiro de Viagem';
+    localStorage.setItem('roteiro_nome', name);
+  }
+
+  function renderAll() {
+    const empty = document.getElementById('empty-state');
+    const itin  = document.getElementById('itinerary');
+    const cont  = document.getElementById('days-container');
+
+    if (days.length === 0) {
+      empty.style.display  = 'flex';
+      itin.style.display   = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    itin.style.display  = 'block';
+
+    const totalStops = days.reduce((a, d) => a + d.stops.length, 0);
+    document.getElementById('trip-meta').textContent =
+      `${days.length} dia${days.length > 1 ? 's' : ''} · ${totalStops} parada${totalStops !== 1 ? 's' : ''}`;
+
+    if (!activeDayId || !days.find(d => d.id === activeDayId)) {
+      activeDayId = days[0].id;
+    }
+
+    let cardsHtml = '<div class="day-cards">';
+    days.forEach(d => {
+      const isActive = d.id === activeDayId ? 'active' : '';
+      const dateStr = d.date ? formatDate(d.date) : '';
+      cardsHtml += `
+        <div class="day-card ${isActive}" onclick="setActiveDay(${d.id})">
+          <div class="day-card-title">${esc(d.label)}</div>
+          ${dateStr ? `<div class="day-card-date">${dateStr}</div>` : ''}
+        </div>
+      `;
+    });
+    cardsHtml += '</div>';
+
+    const activeDay = days.find(d => d.id === activeDayId);
+    const dayHtml = activeDay ? renderDay(activeDay) : '';
+
+    cont.innerHTML = cardsHtml + dayHtml;
+    localStorage.setItem('roteiro_dados', JSON.stringify(days));
+  }
+
+  function setActiveDay(id) {
+    activeDayId = id;
+    renderAll();
+  }
+
+  function renderDay(d) {
+    const dateStr = d.date ? ' · ' + formatDate(d.date) : '';
+    const stops   = d.stops;
+
+    const stopsHtml = stops.length === 0
+      ? `<p style="font-size:13px; color:var(--muted); padding:12px 0 4px 44px; font-style:italic;">Nenhuma parada ainda — adicione pelo painel.</p>`
+      : stops.map((s, i) => `
+        <div class="stop-row">
+          <div class="stop-gutter">
+            <div class="stop-dot"></div>
+            ${i < stops.length - 1 ? '<div class="stop-line"></div>' : ''}
+          </div>
+          <div class="stop-card">
+            <div class="stop-card-top">
+              <div class="stop-route">
+                <div class="stop-place-col">
+                  <span class="stop-from">${esc(s.from)}</span>
+                  ${s.fromAddr ? `<span class="stop-addr">${esc(s.fromAddr)}</span>` : ''}
+                </div>
+                <span class="stop-arrow-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
+                </span>
+                <div class="stop-place-col">
+                  <span class="stop-to">${esc(s.to)}</span>
+                  ${s.toAddr ? `<span class="stop-addr">${esc(s.toAddr)}</span>` : ''}
+                </div>
+              </div>
+              <div class="stop-right">
+                ${s.time   ? `<div class="time-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="time-chip-label">sai</span>${s.time}</div>` : ''}
+                ${s.arrive ? `<div class="time-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="time-chip-label">chega</span>${s.arrive}</div>` : ''}
+                ${(s.fromAddr || s.toAddr) ? `
+                <a class="btn-maps" href="${mapsUrl(s.fromAddr || s.from, s.toAddr || s.to)}" target="_blank" title="Abrir no Google Maps">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                  Maps
+                </a>` : ''}
+                <button class="btn-del" onclick="deleteStop(${d.id}, ${s.id})" title="Remover parada">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                </button>
+              </div>
+            </div>
+            ${s.notes ? `<div class="stop-notes">${esc(s.notes)}</div>` : ''}
+            ${s.pois.length > 0 ? `<div class="stop-pois">
+              ${s.pois.map(p => `<span class="stop-poi-badge">📍 ${esc(p)}</span>`).join('')}
+            </div>` : ''}
+          </div>
+        </div>
+        ${i < stops.length - 1 ? `
+        <div class="stop-arrow">
+          <div class="arrow-line"></div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>` : ''}
+      `).join('');
+
+    return `
+      <div class="day-block" id="day-${d.id}">
+        <div class="day-header">
+          <div class="day-label-wrap">
+            <span class="day-badge">Dia</span>
+            <span class="day-date-text">${esc(d.label)}${dateStr}</span>
+            <span class="day-stop-count">${stops.length} parada${stops.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            ${dayMapsUrl(d.stops) ? `
+            <a class="btn-maps-day" href="${dayMapsUrl(d.stops)}" target="_blank">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              Rota do dia no Maps
+            </a>` : ''}
+            <button class="btn-del-day" onclick="deleteDay(${d.id})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+              Remover dia
+            </button>
+          </div>
+        </div>
+        <div class="stops-list">${stopsHtml}</div>
+      </div>`;
+  }
+
+  // ── Helpers ──
+  function formatDate(s) {
+    if (!s) return '';
+    const [y, m, d] = s.split('-');
+    const mon = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    return `${d} ${mon[+m-1]}`;
+  }
+
+  function shake(el) {
+    el.style.borderColor = 'var(--danger)';
+    el.style.boxShadow = '0 0 0 3px rgba(217,64,64,.15)';
+    setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 800);
+    el.focus();
+  }
+
+  function clearAll() {
+    if (days.length === 0) return;
+    if (!confirm('Limpar todo o roteiro?')) return;
+    days = [];
+    // Reset day select
+    const sel = document.getElementById('day-select');
+    while (sel.options.length > 2) sel.remove(1);
+    sel.value = '';
+    document.getElementById('trip-name').value = '';
+    updateTitle();
+    renderAll();
+  }
+
+  // ── Maps URL helpers ──
+  function mapsUrl(origin, destination) {
+    const o = encodeURIComponent(origin);
+    const d = encodeURIComponent(destination);
+    return `https://www.google.com/maps/dir/${o}/${d}`;
+  }
+
+  function dayMapsUrl(stops) {
+    // Collect all addresses in order: from[0], to[0], to[1], to[2]...
+    const hasAddr = stops.some(s => s.fromAddr || s.toAddr);
+    if (!hasAddr || stops.length === 0) return '';
+    const points = [];
+    stops.forEach((s, i) => {
+      if (i === 0) points.push(s.fromAddr || s.from);
+      points.push(s.toAddr || s.to);
+    });
+    return 'https://www.google.com/maps/dir/' + points.map(p => encodeURIComponent(p)).join('/');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Init
+  document.getElementById('nd-date').value = new Date().toISOString().split('T')[0];
+  
+  // Carregar dados salvos
+  try {
+    const savedName = localStorage.getItem('roteiro_nome');
+    if (savedName) {
+      document.getElementById('trip-name').value = savedName;
+      updateTitle();
+    }
+    const savedDays = localStorage.getItem('roteiro_dados');
+    if (savedDays) {
+      days = JSON.parse(savedDays);
+      renderAll();
+    }
+  } catch(e) { console.error('Erro ao carregar dados', e); }
+</script>
+</body>
+</html>
