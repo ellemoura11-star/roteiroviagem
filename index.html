@@ -708,7 +708,7 @@
   // ── Supabase ──
   const supabaseUrl = 'https://lzbepuubxlkorvayukie.supabase.co';
   const supabaseKey = 'sb_publishable_0aX-qTjw43ysggnPFv1EXA_r4pvXt7y';
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+  const supa = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   let saveTimeout;
   function scheduleSave() {
@@ -716,7 +716,7 @@
     saveTimeout = setTimeout(async () => {
       const name = document.getElementById('trip-name').value.trim() || 'Minha Viagem';
       try {
-        await supabase.from('roteiro_data').upsert({ id: 1, nome_viagem: name, dias_json: days });
+        await supa.from('roteiro_data').upsert({ id: 1, nome_viagem: name, dias_json: days });
       } catch(e) { console.error('Erro ao salvar no Supabase', e); }
     }, 1000);
   }
@@ -1065,7 +1065,7 @@
   // Carregar dados salvos do Supabase
   async function loadData() {
     try {
-      const { data, error } = await supabase.from('roteiro_data').select('*').eq('id', 1).single();
+      const { data, error } = await supa.from('roteiro_data').select('*').eq('id', 1).single();
       if (data) {
         if (data.nome_viagem) {
           document.getElementById('trip-name').value = data.nome_viagem;
